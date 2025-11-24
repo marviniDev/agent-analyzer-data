@@ -1,6 +1,6 @@
 from agno.agent import Agent
 from agno.tools import tool
-from agno.models.google import Gemini
+from agno.models.openai import OpenAIChat
 import sys
 import io
 import pandas as pd
@@ -80,9 +80,9 @@ def code_interpreter(code: str) -> str:
 
 analyst_agent = Agent(
     tools=[dataset_overview, code_interpreter],
-    model=Gemini(
-        id="gemini-2.0-flash-001",
-        api_key=os.getenv("GOOGLE_API_KEY")
+    model=OpenAIChat(
+        id="gpt-4o",
+        api_key=os.getenv("OPENAI_API_KEY")
     ),
     num_history_runs=1,
     # executar só duas vezes
