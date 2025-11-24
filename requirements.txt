@@ -3,4 +3,6 @@ openai
 pandas
 python-dotenv
 matplotlib
+seaborn
+numpy
 

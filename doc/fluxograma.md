@@ -1,35 +1,40 @@
-# 📊 Fluxograma do Agente Analista de Dados
+# 📊 Fluxograma do Agente Genérico de EDA
 
-Este documento descreve o fluxo de funcionamento do agente de análise de dados.
+Este documento descreve o fluxo de funcionamento do agente genérico de análise exploratória de dados (EDA).
 
 ## 🔄 Fluxo Principal
 
 ```mermaid
 flowchart TD
     Start([Início]) --> LoadEnv[Carregar variáveis de ambiente<br/>.env]
-    LoadEnv --> LoadCSV[Carregar arquivo CSV<br/>archive/creditcard.csv]
-    LoadCSV --> Preprocess[Pré-processar dados<br/>preprocess_csv]
+    LoadEnv --> Init[Inicializar agente<br/>com 6 ferramentas]
     
-    Preprocess --> CreateTools[Criar ferramentas<br/>dataset_overview<br/>code_interpreter]
-    CreateTools --> CreateAgent[Criar Agente OpenAI<br/>com ferramentas]
+    Init --> UserInput[Usuário informa<br/>caminho do CSV]
+    UserInput --> LoadCSV[load_csv:<br/>Carregar CSV na memória]
     
-    CreateAgent --> WaitQuestion{Aguardar<br/>Pergunta do Usuário}
+    LoadCSV --> StoreData[Armazenar DataFrame<br/>em datasets dict]
+    StoreData --> Ready[Dataset pronto<br/>para análise]
     
-    WaitQuestion --> AnalyzeQuestion{Analisar<br/>Tipo de Pergunta}
+    Ready --> WaitQuestion{Aguardar<br/>Pergunta do Usuário}
     
-    AnalyzeQuestion -->|Pergunta Geral| UseOverview[Usar dataset_overview<br/>Retornar metadados e estatísticas]
-    AnalyzeQuestion -->|Pergunta Específica| UseInterpreter[Usar code_interpreter<br/>Executar código Python]
+    WaitQuestion --> CheckDataset[check_dataset_loaded:<br/>Verificar se dataset está carregado]
     
-    UseOverview --> ProcessResult[Processar Resultado]
-    UseInterpreter --> CheckResult{Verificar<br/>Resultado}
+    CheckDataset -->|Dataset carregado| AnalyzeType{Analisar<br/>Tipo de Pergunta}
+    CheckDataset -->|Dataset não carregado| LoadCSV
     
-    CheckResult -->|Variável 'result'| ReturnResult[Retornar resultado]
-    CheckResult -->|Print output| CaptureOutput[Capturar output]
-    CheckResult -->|Erro| ReturnError[Retornar mensagem de erro]
+    AnalyzeType -->|Info geral| GetInfo[get_dataset_info:<br/>Retornar metadados]
+    AnalyzeType -->|Análise específica| ExecuteCode[execute_analysis:<br/>Executar código Python]
+    AnalyzeType -->|Salvar conclusão| SaveConclusion[save_conclusion:<br/>Armazenar na memória]
+    AnalyzeType -->|Ver conclusões| GetConclusions[get_conclusions:<br/>Recuperar conclusões]
     
-    CaptureOutput --> ProcessResult
-    ReturnResult --> ProcessResult
-    ReturnError --> ProcessResult
+    GetInfo --> ProcessResult[Processar Resultado]
+    ExecuteCode --> GenerateGraph{Gerar<br/>Gráfico?}
+    GenerateGraph -->|Sim| SaveGraph[Salvar gráfico<br/>em output/]
+    GenerateGraph -->|Não| ProcessResult
+    SaveGraph --> ProcessResult
+    
+    SaveConclusion --> ProcessResult
+    GetConclusions --> ProcessResult
     
     ProcessResult --> FormatResponse[Formatar Resposta]
     FormatResponse --> DisplayResponse[Exibir Resposta ao Usuário]
@@ -37,98 +42,324 @@ flowchart TD
     DisplayResponse --> WaitQuestion
     
     style Start fill:#90EE90
-    style CreateAgent fill:#87CEEB
-    style UseOverview fill:#FFD700
-    style UseInterpreter fill:#FFD700
+    style Init fill:#87CEEB
+    style LoadCSV fill:#FFD700
+    style ExecuteCode fill:#FFD700
+    style SaveGraph fill:#FFB6C1
     style DisplayResponse fill:#90EE90
 ```
 
-## 🔧 Fluxo de Pré-processamento
+## 🛠️ Ferramentas Disponíveis
+
+### 1. `load_csv`
+Carrega um arquivo CSV e o armazena na memória global.
 
 ```mermaid
 flowchart LR
-    A[CSV File] --> B[Carregar com pandas]
-    B --> C[Extrair Metadados]
-    B --> D[Calcular Estatísticas]
-    B --> E[Amostra de 5 linhas]
-    
-    C --> F[preprocessed_data]
-    D --> F
-    E --> F
-    
-    F --> G[Armazenar em memória]
+    A[CSV File Path] --> B[Ler CSV com pandas]
+    B --> C[Armazenar em datasets dict]
+    C --> D[Definir current_dataset_name]
+    D --> E[Retornar resumo JSON]
     
     style A fill:#FFB6C1
-    style F fill:#87CEEB
-    style G fill:#90EE90
+    style C fill:#87CEEB
+    style E fill:#90EE90
 ```
 
-## 🛠️ Fluxo da Ferramenta code_interpreter
+### 2. `check_dataset_loaded`
+Verifica se há um dataset carregado na memória.
 
 ```mermaid
 flowchart TD
-    Start([Receber código Python]) --> ExecCode[Executar código<br/>com DataFrame 'df']
+    Start([Verificar dataset]) --> Check{current_dataset_name<br/>existe?}
+    Check -->|Sim| CheckDict{Dataset em<br/>datasets dict?}
+    Check -->|Não| ReturnNone[Retornar:<br/>Nenhum dataset carregado]
+    
+    CheckDict -->|Sim| GetInfo[Obter informações<br/>do DataFrame]
+    CheckDict -->|Não| ReturnNone
+    
+    GetInfo --> ReturnInfo[Retornar:<br/>Dataset carregado + dimensões]
+    
+    style Start fill:#FFB6C1
+    style ReturnInfo fill:#90EE90
+    style ReturnNone fill:#FF6B6B
+```
+
+### 3. `get_dataset_info`
+Retorna informações completas sobre o dataset carregado.
+
+```mermaid
+flowchart TD
+    Start([get_dataset_info]) --> Validate{Dataset<br/>carregado?}
+    Validate -->|Não| Error[Retornar erro]
+    Validate -->|Sim| Extract[Extrair informações]
+    
+    Extract --> Info1[Dimensões]
+    Extract --> Info2[Colunas]
+    Extract --> Info3[Tipos de dados]
+    Extract --> Info4[Valores ausentes]
+    Extract --> Info5[Estatísticas descritivas]
+    Extract --> Info6[Amostra 5 linhas]
+    
+    Info1 --> Combine[Combinar em JSON]
+    Info2 --> Combine
+    Info3 --> Combine
+    Info4 --> Combine
+    Info5 --> Combine
+    Info6 --> Combine
+    
+    Combine --> Return[Retornar JSON]
+    
+    style Start fill:#FFB6C1
+    style Combine fill:#87CEEB
+    style Return fill:#90EE90
+```
+
+### 4. `execute_analysis`
+Executa código Python para análises específicas e geração de gráficos.
+
+```mermaid
+flowchart TD
+    Start([Receber código Python]) --> Validate{Dataset<br/>carregado?}
+    Validate -->|Não| Error[Retornar erro]
+    Validate -->|Sim| PrepareEnv[Preparar ambiente:<br/>df, pd, np, plt, sns]
+    
+    PrepareEnv --> CaptureStdout[Capturar stdout]
+    CaptureStdout --> ExecCode[Executar código<br/>com exec]
     
     ExecCode --> CheckError{Erro na<br/>execução?}
     
-    CheckError -->|Sim| ReturnError[Retornar mensagem<br/>de erro]
+    CheckError -->|Sim| RestoreStdout[Restaurar stdout]
+    RestoreStdout --> ReturnError[Retornar mensagem<br/>de erro]
+    
     CheckError -->|Não| CheckResult{Existe variável<br/>'result'?}
     
-    CheckResult -->|Sim| ReturnResult[Retornar str result]
-    CheckResult -->|Não| CapturePrint[Capturar output<br/>do print]
+    CheckResult -->|Sim| GetResult[Obter resultado]
+    CheckResult -->|Não| GetOutput[Obter output<br/>capturado]
     
-    CapturePrint --> CheckOutput{Output<br/>vazio?}
-    CheckOutput -->|Sim| ReturnEmpty[Mensagem padrão]
-    CheckOutput -->|Não| ReturnOutput[Retornar output]
+    GetResult --> RestoreStdout
+    GetOutput --> RestoreStdout
     
-    ReturnResult --> End([Fim])
-    ReturnOutput --> End
-    ReturnEmpty --> End
-    ReturnError --> End
+    RestoreStdout --> FormatReturn[Formatar retorno]
+    FormatReturn --> Return[Retornar resultado]
     
     style Start fill:#FFB6C1
     style ExecCode fill:#FFD700
     style ReturnError fill:#FF6B6B
+    style Return fill:#90EE90
+```
+
+### 5. `save_conclusion`
+Salva uma conclusão importante na memória.
+
+```mermaid
+flowchart LR
+    A[Conclusão texto] --> B[Criar entrada com timestamp]
+    B --> C[Adicionar a conclusions_memory]
+    C --> D[Salvar em output/conclusions.json]
+    D --> E[Retornar confirmação]
+    
+    style A fill:#FFB6C1
+    style C fill:#87CEEB
+    style D fill:#FFD700
+    style E fill:#90EE90
+```
+
+### 6. `get_conclusions`
+Recupera todas as conclusões salvas.
+
+```mermaid
+flowchart TD
+    Start([get_conclusions]) --> Check{conclusions_memory<br/>vazio?}
+    Check -->|Sim| ReturnEmpty[Retornar:<br/>Nenhuma conclusão]
+    Check -->|Não| FormatJSON[Formatar como JSON]
+    FormatJSON --> Return[Retornar conclusões]
+    
+    style Start fill:#FFB6C1
+    style Return fill:#90EE90
+    style ReturnEmpty fill:#FF6B6B
+```
+
+## 📊 Fluxo de Geração de Gráficos
+
+```mermaid
+flowchart TD
+    Start([execute_analysis recebe código]) --> CodeHasPlot{Código contém<br/>plt.savefig?}
+    
+    CodeHasPlot -->|Sim| ExecCode[Executar código]
+    CodeHasPlot -->|Não| ExecCode
+    
+    ExecCode --> PlotSaved[Gráfico salvo em<br/>output/nome.png]
+    PlotSaved --> ClosePlot[plt.close libera memória]
+    ClosePlot --> Return[Retornar resultado]
+    
+    style Start fill:#FFB6C1
+    style PlotSaved fill:#FFD700
+    style Return fill:#90EE90
+```
+
+## 🔄 Fluxo de Memória de Conclusões
+
+```mermaid
+flowchart TD
+    Analysis[Análise realizada] --> Important{Conclusão<br/>importante?}
+    
+    Important -->|Sim| Save[save_conclusion]
+    Important -->|Não| Continue[Continuar análise]
+    
+    Save --> Memory[Armazenar em<br/>conclusions_memory]
+    Memory --> File[Salvar em<br/>output/conclusions.json]
+    
+    UserRequest[Usuário pede conclusões] --> Get[get_conclusions]
+    Get --> Load[Carregar de<br/>conclusions_memory]
+    Load --> Format[Formatar e retornar]
+    
+    style Save fill:#FFD700
+    style Memory fill:#87CEEB
+    style Format fill:#90EE90
+```
+
+## 🎯 Tipos de Análises Suportadas
+
+### A) Descrição dos Dados
+- Tipos de dados (numéricos, categóricos)
+- Distribuições (histogramas, boxplots)
+- Intervalos (mínimo, máximo, quartis)
+- Medidas de tendência central (média, mediana, moda)
+- Variabilidade (desvio padrão, variância, IQR)
+
+### B) Identificação de Padrões e Tendências
+- Padrões temporais
+- Valores mais/menos frequentes
+- Agrupamentos ou clusters visuais
+
+### C) Detecção de Anomalias (Outliers)
+- Identificação usando IQR, Z-score
+- Análise de impacto
+- Sugestões de tratamento
+
+### D) Relações entre Variáveis
+- Gráficos de dispersão
+- Matriz de correlação
+- Tabelas cruzadas
+- Identificação de correlações
+
+### E) Conclusões e Insights
+- Resumo das descobertas
+- Insights baseados nas análises
+- Recomendações
+
+## 🔄 Loop de Interação Completo
+
+```mermaid
+flowchart TD
+    Start([Início do programa]) --> LoadCSV[Usuário informa CSV]
+    LoadCSV --> AgentLoad[Agente carrega CSV]
+    AgentLoad --> Ready[Dataset pronto]
+    
+    Ready --> LoopStart[Loop de perguntas]
+    
+    LoopStart --> UserQ[Usuário faz pergunta]
+    UserQ --> Check[Agente verifica dataset]
+    Check --> Analyze[Agente analisa pergunta]
+    Analyze --> ChooseTool[Escolhe ferramenta]
+    
+    ChooseTool --> Tool1[load_csv]
+    ChooseTool --> Tool2[check_dataset_loaded]
+    ChooseTool --> Tool3[get_dataset_info]
+    ChooseTool --> Tool4[execute_analysis]
+    ChooseTool --> Tool5[save_conclusion]
+    ChooseTool --> Tool6[get_conclusions]
+    
+    Tool1 --> Process
+    Tool2 --> Process
+    Tool3 --> Process
+    Tool4 --> Process
+    Tool5 --> Process
+    Tool6 --> Process
+    
+    Process --> Response[Gerar resposta]
+    Response --> Display[Exibir ao usuário]
+    Display --> MoreQ{Mais<br/>perguntas?}
+    
+    MoreQ -->|Sim| LoopStart
+    MoreQ -->|Não| End([Fim])
+    
+    style Start fill:#90EE90
+    style Ready fill:#87CEEB
+    style Analyze fill:#FFD700
+    style Response fill:#FFB6C1
     style End fill:#90EE90
 ```
 
 ## 📝 Descrição dos Componentes
 
 ### 1. Inicialização
-- **Carregamento de ambiente**: Lê a variável `OPENAI_API_KEY` do arquivo `.env`
-- **Carregamento de dados**: Lê o arquivo CSV e armazena em `df_global`
-- **Pré-processamento**: Gera metadados, estatísticas e amostra dos dados
+- **Carregamento de ambiente**: Lê `OPENAI_API_KEY` do arquivo `.env`
+- **Configuração de gráficos**: Define estilo seaborn e parâmetros matplotlib
+- **Variáveis globais**: 
+  - `datasets`: Dicionário para armazenar DataFrames
+  - `current_dataset_name`: Nome do dataset atual
+  - `conclusions_memory`: Lista de conclusões salvas
 
 ### 2. Criação do Agente
 - **Modelo**: OpenAI GPT-4o
-- **Ferramentas**: 
-  - `dataset_overview`: Para perguntas gerais
-  - `code_interpreter`: Para cálculos específicos
-- **Configuração**: `num_history_runs=1` para limitar histórico
+- **Ferramentas**: 6 ferramentas especializadas
+- **Instruções**: Processo de trabalho detalhado e diretrizes específicas
 
 ### 3. Processamento de Perguntas
-- **Análise**: O agente decide qual ferramenta usar baseado na pergunta
-- **Execução**: Chama a ferramenta apropriada
-- **Resposta**: Formata e retorna o resultado ao usuário
+- **Verificação**: Sempre verifica se dataset está carregado
+- **Análise**: O agente decide qual ferramenta usar
+- **Execução**: Executa código Python quando necessário
+- **Geração de gráficos**: Salva automaticamente em `output/`
+- **Memória**: Salva conclusões importantes
 
-### 4. Tipos de Perguntas
+### 4. Sistema de Memória
+- **Conclusões**: Armazenadas em memória e arquivo JSON
+- **Persistência**: Conclusões sobrevivem entre sessões
+- **Recuperação**: Pode recuperar todas as conclusões a qualquer momento
 
-#### Perguntas Gerais → `dataset_overview`
-- "Quantas colunas há no dataset?"
-- "Quais colunas possuem valores ausentes?"
-- "Quais são os tipos de dados?"
+## 🔧 Estrutura de Dados
 
-#### Perguntas Específicas → `code_interpreter`
-- "Qual a média da coluna 'Amount'?"
-- "Filtre as transações fraudulentas"
-- "Crie um gráfico de barras"
+### datasets (dict)
+```python
+{
+    "creditcard": DataFrame,  # Dataset carregado
+    "outro_dataset": DataFrame # Outro dataset (se carregado)
+}
+```
 
-## 🔄 Loop de Interação
+### conclusions_memory (list)
+```python
+[
+    {
+        "timestamp": "2025-01-XX...",
+        "conclusion": "Texto da conclusão"
+    },
+    ...
+]
+```
 
-O agente funciona em um loop contínuo:
-1. Recebe pergunta do usuário
-2. Analisa e escolhe ferramenta
-3. Executa e processa resultado
-4. Retorna resposta formatada
-5. Aguarda próxima pergunta
+## 📂 Estrutura de Arquivos Gerados
 
+```
+output/
+├── grafico1.png
+├── grafico2.png
+├── ...
+└── conclusions.json
+```
+
+## 🔄 Fluxo de Execução Típico
+
+1. **Inicialização**: Carrega variáveis de ambiente
+2. **Carregamento**: Usuário informa CSV → agente carrega
+3. **Análise**: Usuário faz pergunta → agente:
+   - Verifica dataset carregado
+   - Escolhe ferramenta apropriada
+   - Executa análise
+   - Gera gráficos (se necessário)
+   - Salva conclusões (se relevante)
+   - Retorna resposta
+4. **Loop**: Repete passo 3 até usuário sair
+5. **Finalização**: Conclusões permanecem salvas em JSON

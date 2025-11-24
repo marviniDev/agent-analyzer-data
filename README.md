@@ -1,6 +1,6 @@
-# 🧠 Agente Analista de Dados com OpenAI e Agno
+# 🧠 Agente Genérico de Análise Exploratória de Dados (EDA)
 
-Este projeto cria um **agente de análise de dados** utilizando a biblioteca **Agno** e o modelo **OpenAI GPT-4o**. O agente é capaz de responder perguntas gerais sobre um dataset (ex: estatísticas, colunas, tipos de dados) e também executar **códigos Python dinâmicos** para realizar cálculos, filtros ou agregações sobre o DataFrame carregado.
+Este projeto cria um **agente genérico de análise exploratória de dados** utilizando a biblioteca **Agno** e o modelo **OpenAI GPT-4o**. O agente é capaz de analisar **qualquer arquivo CSV**, gerar gráficos, detectar padrões, anomalias e apresentar conclusões baseadas nas análises realizadas.
 
 ---
 
@@ -9,12 +9,14 @@ Este projeto cria um **agente de análise de dados** utilizando a biblioteca **A
 ```
 agent-ia-EDA/
 ├── archive/
-│   └── creditcard.csv       # Dataset utilizado (exemplo)
+│   └── creditcard.csv       # Dataset de exemplo (fraudes de cartão de crédito)
 ├── doc/
 │   └── fluxograma.md        # Fluxograma do projeto
+├── output/                  # Diretório criado automaticamente para gráficos e conclusões
 ├── .env                     # Contém sua chave da API da OpenAI (OPENAI_API_KEY)
 ├── .gitignore               # Arquivos ignorados pelo Git
-├── main_agent.py            # Código principal do agente
+├── eda_agent.py             # Agente genérico de EDA (NOVO - solução completa)
+├── main_agent.py            # Código original (exemplo anterior)
 ├── requirements.txt         # Dependências do projeto
 ├── README.md                # Este arquivo
 └── LICENSE                  # Licença MIT
@@ -24,89 +26,73 @@ agent-ia-EDA/
 
 ## ⚙️ Funcionalidades Principais
 
-### 🔹 1. Pré-processamento de Dados (`preprocess_csv`)
+### 🔹 1. Carregamento Dinâmico de CSVs (`load_csv`)
 
-Carrega um arquivo CSV e gera um resumo com:
-- **Metadados**: linhas, colunas, tipos de dados, valores nulos
-- **Estatísticas descritivas** resumidas
-- **Pequena amostra** de 5 linhas para referência
+Carrega qualquer arquivo CSV e o armazena na memória para análise. Não é necessário modificar o código para usar diferentes datasets.
 
-### 🔹 2. Ferramenta `dataset_overview`
+### 🔹 2. Informações do Dataset (`get_dataset_info`)
 
-Retorna o resumo pré-processado do dataset.  
-Ideal para perguntas **gerais** como:
-- "Quantas colunas há no dataset?"
-- "Quais colunas possuem valores ausentes?"
-- "Quais são os tipos de dados de cada coluna?"
+Retorna informações completas sobre o dataset:
+- Dimensões (linhas x colunas)
+- Tipos de dados
+- Valores ausentes
+- Estatísticas descritivas
+- Amostra dos dados
 
-### 🔹 3. Ferramenta `code_interpreter`
+### 🔹 3. Execução de Análises (`execute_analysis`)
 
-Executa código Python diretamente no contexto do dataset (`df`).  
-Ideal para perguntas **específicas** que exigem cálculo, como:
-- "Qual a média da coluna 'Amount'?"
-- "Filtre as transações fraudulentas e conte quantas existem."
-- "Crie um gráfico de barras mostrando a média de 'Amount' para cada valor de 'Class'."
+Executa código Python para realizar análises específicas:
+- Cálculos estatísticos
+- Filtros e agregações
+- **Geração de gráficos** (salvos automaticamente em `output/`)
+- Detecção de padrões e anomalias
 
-**Nota**: Se o código definir uma variável `result`, ela será retornada. Caso contrário, o resultado impresso no console é capturado e exibido.
+### 🔹 4. Sistema de Memória (`save_conclusion` / `get_conclusions`)
 
----
-
-## 🤖 Criação do Agente
-
-O agente é criado com duas ferramentas e o modelo OpenAI:
-
-```python
-analyst_agent = Agent(
-    tools=[dataset_overview, code_interpreter],
-    model=OpenAIChat(
-        id="gpt-4o",
-        api_key=os.getenv("OPENAI_API_KEY")
-    ),
-    num_history_runs=1,
-    description="Você é um assistente de IA que tem acesso a DUAS ferramentas e NADA MAIS.",
-    instructions=[
-        "Sua única tarefa é responder perguntas sobre um dataset usando as ferramentas disponíveis."
-    ],
-)
-```
+Salva conclusões importantes das análises e permite recuperá-las posteriormente. As conclusões são salvas tanto na memória quanto em arquivo JSON.
 
 ---
 
-## 🚀 Exemplo de Uso
+## 🎯 Tipos de Análises Suportadas
 
-```python
-print("\n--- Pergunta 2: Cálculo Específico (Média) ---")
-analyst_agent.print_response(
-    "Selecione a coluna 'Amount' e 'Class' e crie um gráfico de barras mostrando a média de 'Amount' para cada valor de 'Class'."
-)
-```
+O agente é capaz de responder perguntas sobre:
 
-O agente entende o contexto e gera o código necessário para calcular e exibir o gráfico, utilizando `pandas` e `matplotlib` internamente.
+### 📊 Descrição dos Dados
+- Tipos de dados (numéricos, categóricos)
+- Distribuições (histogramas, boxplots)
+- Intervalos (mínimo, máximo, quartis)
+- Medidas de tendência central (média, mediana, moda)
+- Variabilidade (desvio padrão, variância, IQR)
+
+### 🔍 Identificação de Padrões e Tendências
+- Padrões temporais (se houver coluna de tempo/data)
+- Valores mais/menos frequentes
+- Agrupamentos ou clusters visuais
+
+### ⚠️ Detecção de Anomalias (Outliers)
+- Identificação de valores atípicos
+- Análise do impacto dos outliers
+- Sugestões de tratamento
+
+### 🔗 Relações entre Variáveis
+- Gráficos de dispersão
+- Matriz de correlação
+- Tabelas cruzadas
+- Identificação de variáveis mais/menos correlacionadas
+
+### 💡 Conclusões e Insights
+- Resumo das descobertas
+- Insights baseados nas análises
+- Recomendações
 
 ---
 
-## 🔐 Variáveis de Ambiente
+## 🚀 Como Usar
 
-Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
-
-```
-OPENAI_API_KEY=your_api_key_here
-```
-
-> **Como obter sua chave API**: Acesse [platform.openai.com](https://platform.openai.com/api-keys) para criar uma conta e gerar sua chave de API.
-
-> **Importante**: Não commite o arquivo `.env` no controle de versão. Ele contém informações sensíveis.
-
----
-
-## 🧩 Requisitos
-
-### Instalação das Dependências
-
-**Opção 1: Usando ambiente virtual (recomendado)**
+### 1. Instalação das Dependências
 
 ```bash
-# Criar ambiente virtual
+# Criar ambiente virtual (se ainda não criou)
 python3 -m venv .venv
 
 # Ativar ambiente virtual
@@ -118,7 +104,105 @@ source .venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-### ⚙️ Configuração do VSCode
+### 2. Configurar Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```
+OPENAI_API_KEY=your_api_key_here
+```
+
+> **Como obter sua chave API**: Acesse [platform.openai.com](https://platform.openai.com/api-keys) para criar uma conta e gerar sua chave de API.
+
+### 3. Executar o Agente
+
+```bash
+python eda_agent.py
+```
+
+O agente irá:
+1. Solicitar o caminho do arquivo CSV (ou usar o padrão `./archive/creditcard.csv`)
+2. Carregar o dataset
+3. Entrar em modo interativo para receber suas perguntas
+
+### 4. Fazer Perguntas
+
+Exemplos de perguntas que você pode fazer:
+
+```
+❓ Quais são os tipos de dados de cada coluna?
+❓ Qual a distribuição da coluna 'Amount'?
+❓ Existem valores atípicos na coluna 'Amount'?
+❓ Qual a correlação entre as variáveis numéricas?
+❓ Crie um gráfico mostrando a distribuição de fraudes (Class) por valor (Amount)
+❓ Quais são as principais conclusões que podemos tirar dos dados?
+```
+
+Digite `conclusoes` para ver um resumo de todas as análises realizadas.
+
+Digite `sair` para encerrar o programa.
+
+---
+
+## 📈 Gráficos Gerados
+
+Todos os gráficos são salvos automaticamente no diretório `output/` com nomes descritivos. O agente informa quais gráficos foram gerados após cada análise.
+
+---
+
+## 💾 Memória de Conclusões
+
+O agente mantém um histórico de todas as conclusões importantes encontradas durante as análises. Essas conclusões são:
+- Armazenadas na memória durante a sessão
+- Salvas em `output/conclusions.json` para persistência
+- Recuperáveis a qualquer momento com o comando `conclusoes`
+
+---
+
+## 🎓 Exemplo de Uso Completo
+
+```bash
+$ python eda_agent.py
+
+======================================================================
+🤖 AGENTE DE ANÁLISE EXPLORATÓRIA DE DADOS (EDA)
+======================================================================
+
+📁 Digite o caminho do arquivo CSV (ou Enter para usar './archive/creditcard.csv'): 
+
+⏳ Carregando dataset: ./archive/creditcard.csv
+✅ Dataset carregado com sucesso!
+
+======================================================================
+💬 Agora você pode fazer perguntas sobre os dados!
+   Digite 'sair' para encerrar
+   Digite 'conclusoes' para ver um resumo das análises
+======================================================================
+
+❓ Sua pergunta: Qual a distribuição de fraudes no dataset?
+
+🔍 Analisando...
+
+💡 Resposta:
+[Análise completa com gráficos e estatísticas]
+
+📈 Gráficos recentes salvos em: output/distribuicao_fraudes.png
+```
+
+---
+
+## 🔐 Segurança
+
+> **Importante**: Não commite o arquivo `.env` no controle de versão. Ele contém informações sensíveis.
+
+O arquivo `.gitignore` já está configurado para ignorar:
+- `.env`
+- `output/` (gráficos e conclusões)
+- `.venv/` (ambiente virtual)
+
+---
+
+## ⚙️ Configuração do VSCode
 
 O projeto já inclui um arquivo `.vscode/settings.json` que configura o VSCode para usar o ambiente virtual automaticamente.
 
@@ -128,22 +212,25 @@ O projeto já inclui um arquivo `.vscode/settings.json` que configura o VSCode p
 2. Digite "Python: Select Interpreter"
 3. Selecione o interpretador do ambiente virtual: `.venv/bin/python`
 
-> **Nota**: Certifique-se de também ter o dataset (exemplo: `creditcard.csv`) na pasta `archive/`.
+---
+
+## 📚 Sobre o Dataset de Exemplo
+
+O arquivo `creditcard.csv` contém dados de transações de cartão de crédito com indicação de fraude:
+- **Time**: Número de segundos desde a primeira transação
+- **V1 a V28**: Variáveis transformadas por PCA (privacidade)
+- **Amount**: Valor da transação
+- **Class**: 1 = fraude, 0 = normal
 
 ---
 
-## 📚 Documentação
+## 💡 Observações Técnicas
 
-Para entender melhor o fluxo de funcionamento do agente, consulte o [fluxograma](doc/fluxograma.md) na pasta `doc/`.
-
----
-
-## 💡 Observações
-
-- A função `preprocess_csv` limita o tamanho dos dados para não ultrapassar o limite de tokens do modelo.
-- O `code_interpreter` é protegido contra erros e retorna mensagens amigáveis em caso de exceção.
-- O projeto é facilmente adaptável para outros datasets - basta modificar o caminho do arquivo CSV em `main_agent.py`.
-- O agente está configurado com `num_history_runs=1` para limitar o histórico de conversas.
+- O agente usa `matplotlib` com backend não-interativo para salvar gráficos
+- Todos os gráficos são salvos em formato PNG no diretório `output/`
+- O sistema de memória permite que o agente "lembre" de análises anteriores
+- O código é executado em um ambiente isolado com acesso apenas ao DataFrame
+- O agente é genérico e funciona com qualquer CSV, não apenas o exemplo fornecido
 
 ---
 
