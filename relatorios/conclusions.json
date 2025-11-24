@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2025-11-24T19:06:28.027460",
+    "conclusion": "A distribuição de valores na coluna 'Amount' é assimétrica, com a maioria concentrada em valores baixos. Foram detectados 4.076 outliers baseados no Z-score."
+  },
+  {
+    "timestamp": "2025-11-24T19:06:28.028503",
+    "conclusion": "A distribuição da coluna 'Time' é aproximadamente uniforme, indicando transações ao longo de um longo período sem tendências específicas de concentração."
+  },
+  {
+    "timestamp": "2025-11-24T19:06:59.936458",
+    "conclusion": "As variáveis 'V11', 'V4', e 'V2' apresentam alguma correlação positiva com a ocorrência de fraudes, enquanto 'V17', 'V14', e 'V12' mostram correlação negativa mais notável com fraudes no dataset."
+  },
+  {
+    "timestamp": "2025-11-24T19:06:59.937538",
+    "conclusion": "As correlações com 'Class' são em geral fracas, indicando a complexidade no uso isolado dessas variáveis para identificação de fraudes. O uso de técnicas mais avançadas pode oferecer melhores resultados."
+  }
+]
