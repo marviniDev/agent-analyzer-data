@@ -72,13 +72,13 @@ exec(code, exec_globals, exec_locals)
 ### 4. Camada de Persistência (Persistence Layer)
 
 **Gráficos:**
-- Salvos em `output/*.png`
+- Salvos em `graficos/*.png`
 - Nomes descritivos gerados pelo agente
 - Formato PNG para compatibilidade
 
 **Conclusões:**
 - Memória: `conclusions_memory` (lista)
-- Arquivo: `output/conclusions.json`
+- Arquivo: `graficos/conclusions.json`
 - Formato JSON para fácil leitura
 
 ## 🔄 Fluxo de Dados
@@ -126,7 +126,7 @@ agent-ia-EDA/
 ├── archive/             # Datasets
 │   └── creditcard.csv
 │
-├── output/              # Gerado automaticamente
+├── graficos/            # Gerado automaticamente
 │   ├── *.png           # Gráficos
 │   └── conclusions.json # Conclusões
 │
@@ -170,7 +170,7 @@ model = OpenAIChat(
 ### Isolamento de Código
 - Código executado em contexto controlado
 - Acesso apenas a bibliotecas permitidas
-- Sem acesso a sistema de arquivos (exceto output/)
+- Sem acesso a sistema de arquivos (exceto graficos/)
 - Sem acesso a rede
 
 ### Tratamento de Erros
@@ -186,7 +186,7 @@ Código Python
     │
     ├─→ plt.figure()
     ├─→ sns.plot() / plt.plot()
-    ├─→ plt.savefig('output/nome.png')
+    ├─→ plt.savefig('graficos/nome.png')
     ├─→ plt.close()
     └─→ Retorna resultado
 ```
@@ -245,7 +245,7 @@ eda_agent = Agent(...)
 ### 4. Persistência
 ```python
 # Conclusões salvas automaticamente
-# Gráficos salvos em output/
+# Gráficos salvos em graficos/
 ```
 
 ## 🚀 Otimizações

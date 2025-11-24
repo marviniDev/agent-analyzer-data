@@ -165,7 +165,7 @@ Executa código Python para análise de dados. Permite cálculos, filtros, agreg
 - `np`: Biblioteca numpy
 - `plt`: Biblioteca matplotlib.pyplot
 - `sns`: Biblioteca seaborn
-- `output_dir`: Path do diretório output/
+- `output_dir`: Path do diretório graficos/
 
 ### Retorno
 - Se código define `result`: Retorna o valor de `result`
@@ -184,7 +184,7 @@ sns.histplot(df['Amount'], bins=50)
 plt.title('Distribuição de Amount')
 plt.xlabel('Amount')
 plt.ylabel('Frequência')
-plt.savefig('output/distribuicao_amount.png')
+plt.savefig('graficos/distribuicao_amount.png')
 plt.close()
 
 result = f"Gráfico salvo! Estatísticas: Média={df['Amount'].mean():.2f}, Mediana={df['Amount'].median():.2f}"
@@ -193,7 +193,7 @@ execute_analysis(code)
 ```
 
 ### Diretrizes Importantes
-1. **Gráficos**: Sempre use `plt.savefig('output/nome.png')` antes de `plt.close()`
+1. **Gráficos**: Sempre use `plt.savefig('graficos/nome.png')` antes de `plt.close()`
 2. **Memória**: Use `plt.close()` após cada gráfico
 3. **Resultado**: Defina `result` se quiser retornar um valor específico
 4. **Erros**: O código é executado em ambiente isolado, erros são capturados
@@ -228,7 +228,7 @@ Conclusão salva: A coluna Amount apresenta muitos outliers, com valores extremo
 
 ### Comportamento
 - Adiciona entrada em `conclusions_memory` com timestamp
-- Salva automaticamente em `output/conclusions.json`
+- Salva automaticamente em `graficos/conclusions.json`
 - Permite recuperação posterior com `get_conclusions`
 
 ### Formato da Conclusão Salva
@@ -328,7 +328,7 @@ get_conclusions()
 - Use `get_conclusions` para resumir descobertas
 
 ### Para Gráficos
-- Sempre salve em `output/` com nomes descritivos
+- Sempre salve em `graficos/` com nomes descritivos
 - Use `plt.close()` após cada gráfico
 - Combine múltiplos gráficos em subplots quando apropriado
 - Use seaborn para gráficos mais bonitos
@@ -371,7 +371,7 @@ sns.histplot(df['Amount'], bins=100, kde=True)
 plt.title('Distribuição de Amount')
 plt.xlabel('Valor da Transação')
 plt.ylabel('Frequência')
-plt.savefig('output/distribuicao_amount.png')
+plt.savefig('graficos/distribuicao_amount.png')
 plt.close()
 
 result = f"Gráfico gerado! Média: {df['Amount'].mean():.2f}, Mediana: {df['Amount'].median():.2f}"
@@ -398,7 +398,7 @@ plt.figure(figsize=(15, 12))
 sns.heatmap(corr_matrix, annot=False, cmap='coolwarm', center=0)
 plt.title('Matriz de Correlação')
 plt.tight_layout()
-plt.savefig('output/matriz_correlacao.png')
+plt.savefig('graficos/matriz_correlacao.png')
 plt.close()
 
 # Encontrar correlações mais altas
@@ -421,7 +421,7 @@ plt.figure(figsize=(10, 6))
 sns.boxplot(y=df['Amount'])
 plt.title('Boxplot de Amount - Detecção de Outliers')
 plt.ylabel('Amount')
-plt.savefig('output/boxplot_amount.png')
+plt.savefig('graficos/boxplot_amount.png')
 plt.close()
 
 # Calcular outliers usando IQR

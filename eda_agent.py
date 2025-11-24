@@ -29,7 +29,7 @@ conclusions_memory = []
 
 def ensure_output_dir():
     """Garante que o diretório de saída existe"""
-    output_dir = Path("output")
+    output_dir = Path("graficos")
     output_dir.mkdir(exist_ok=True)
     return output_dir
 
@@ -120,7 +120,7 @@ def execute_analysis(code: str) -> str:
     O DataFrame está disponível como 'df' e você pode usar pandas, numpy, matplotlib, seaborn.
     
     IMPORTANTE: 
-    - Para gerar gráficos, use plt.savefig('output/grafico.png') antes de plt.close()
+    - Para gerar gráficos, use plt.savefig('graficos/grafico.png') antes de plt.close()
     - Defina uma variável 'result' com o resultado da análise se quiser retornar algo
     - Use plt.close() após salvar cada gráfico para liberar memória
     
@@ -270,8 +270,8 @@ eda_agent = Agent(
         "   - Ao final, use get_conclusions para apresentar um resumo",
         "",
         "DIRETRIZES PARA GRÁFICOS:",
-        "   - Sempre salve gráficos em 'output/' com nomes descritivos",
-        "   - Use plt.savefig('output/nome_do_grafico.png') antes de plt.close()",
+        "   - Sempre salve gráficos em 'graficos/' com nomes descritivos",
+        "   - Use plt.savefig('graficos/nome_do_grafico.png') antes de plt.close()",
         "   - Use plt.close() após cada gráfico para liberar memória",
         "   - Use seaborn para gráficos mais bonitos quando apropriado",
         "   - Adicione títulos e labels descritivos",
@@ -353,7 +353,7 @@ def main():
         print(f"\n💡 Resposta:\n{response.content}")
         
         # Verifica se há gráficos gerados
-        output_dir = Path("output")
+        output_dir = Path("graficos")
         if output_dir.exists():
             recent_files = sorted(output_dir.glob("*.png"), key=os.path.getmtime, reverse=True)[:3]
             if recent_files:

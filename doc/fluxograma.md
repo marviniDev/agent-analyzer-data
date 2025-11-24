@@ -29,7 +29,7 @@ flowchart TD
     
     GetInfo --> ProcessResult[Processar Resultado]
     ExecuteCode --> GenerateGraph{Gerar<br/>Gráfico?}
-    GenerateGraph -->|Sim| SaveGraph[Salvar gráfico<br/>em output/]
+    GenerateGraph -->|Sim| SaveGraph[Salvar gráfico<br/>em graficos/]
     GenerateGraph -->|Não| ProcessResult
     SaveGraph --> ProcessResult
     
@@ -156,7 +156,7 @@ Salva uma conclusão importante na memória.
 flowchart LR
     A[Conclusão texto] --> B[Criar entrada com timestamp]
     B --> C[Adicionar a conclusions_memory]
-    C --> D[Salvar em output/conclusions.json]
+    C --> D[Salvar em graficos/conclusions.json]
     D --> E[Retornar confirmação]
     
     style A fill:#FFB6C1
@@ -189,7 +189,7 @@ flowchart TD
     CodeHasPlot -->|Sim| ExecCode[Executar código]
     CodeHasPlot -->|Não| ExecCode
     
-    ExecCode --> PlotSaved[Gráfico salvo em<br/>output/nome.png]
+    ExecCode --> PlotSaved[Gráfico salvo em<br/>graficos/nome.png]
     PlotSaved --> ClosePlot[plt.close libera memória]
     ClosePlot --> Return[Retornar resultado]
     
@@ -208,7 +208,7 @@ flowchart TD
     Important -->|Não| Continue[Continuar análise]
     
     Save --> Memory[Armazenar em<br/>conclusions_memory]
-    Memory --> File[Salvar em<br/>output/conclusions.json]
+    Memory --> File[Salvar em<br/>graficos/conclusions.json]
     
     UserRequest[Usuário pede conclusões] --> Get[get_conclusions]
     Get --> Load[Carregar de<br/>conclusions_memory]
@@ -311,7 +311,7 @@ flowchart TD
 - **Verificação**: Sempre verifica se dataset está carregado
 - **Análise**: O agente decide qual ferramenta usar
 - **Execução**: Executa código Python quando necessário
-- **Geração de gráficos**: Salva automaticamente em `output/`
+- **Geração de gráficos**: Salva automaticamente em `graficos/`
 - **Memória**: Salva conclusões importantes
 
 ### 4. Sistema de Memória
@@ -343,7 +343,7 @@ flowchart TD
 ## 📂 Estrutura de Arquivos Gerados
 
 ```
-output/
+graficos/
 ├── grafico1.png
 ├── grafico2.png
 ├── ...

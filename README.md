@@ -12,7 +12,7 @@ agent-ia-EDA/
 │   └── creditcard.csv       # Dataset de exemplo (fraudes de cartão de crédito)
 ├── doc/
 │   └── fluxograma.md        # Fluxograma do projeto
-├── output/                  # Diretório criado automaticamente para gráficos e conclusões
+├── graficos/                # Diretório criado automaticamente para gráficos e conclusões
 ├── .env                     # Contém sua chave da API da OpenAI (OPENAI_API_KEY)
 ├── .gitignore               # Arquivos ignorados pelo Git
 ├── eda_agent.py             # Agente genérico de EDA (NOVO - solução completa)
@@ -44,7 +44,7 @@ Retorna informações completas sobre o dataset:
 Executa código Python para realizar análises específicas:
 - Cálculos estatísticos
 - Filtros e agregações
-- **Geração de gráficos** (salvos automaticamente em `output/`)
+- **Geração de gráficos** (salvos automaticamente em `graficos/`)
 - Detecção de padrões e anomalias
 
 ### 🔹 4. Sistema de Memória (`save_conclusion` / `get_conclusions`)
@@ -146,7 +146,7 @@ Digite `sair` para encerrar o programa.
 
 ## 📈 Gráficos Gerados
 
-Todos os gráficos são salvos automaticamente no diretório `output/` com nomes descritivos. O agente informa quais gráficos foram gerados após cada análise.
+Todos os gráficos são salvos automaticamente no diretório `graficos/` com nomes descritivos. O agente informa quais gráficos foram gerados após cada análise.
 
 ---
 
@@ -154,7 +154,7 @@ Todos os gráficos são salvos automaticamente no diretório `output/` com nomes
 
 O agente mantém um histórico de todas as conclusões importantes encontradas durante as análises. Essas conclusões são:
 - Armazenadas na memória durante a sessão
-- Salvas em `output/conclusions.json` para persistência
+- Salvas em `graficos/conclusions.json` para persistência
 - Recuperáveis a qualquer momento com o comando `conclusoes`
 
 ---
@@ -186,7 +186,7 @@ $ python eda_agent.py
 💡 Resposta:
 [Análise completa com gráficos e estatísticas]
 
-📈 Gráficos recentes salvos em: output/distribuicao_fraudes.png
+📈 Gráficos recentes salvos em: graficos/distribuicao_fraudes.png
 ```
 
 ---
@@ -197,7 +197,7 @@ $ python eda_agent.py
 
 O arquivo `.gitignore` já está configurado para ignorar:
 - `.env`
-- `output/` (gráficos e conclusões)
+- `graficos/` (gráficos e conclusões)
 - `.venv/` (ambiente virtual)
 
 ---
@@ -227,7 +227,7 @@ O arquivo `creditcard.csv` contém dados de transações de cartão de crédito 
 ## 💡 Observações Técnicas
 
 - O agente usa `matplotlib` com backend não-interativo para salvar gráficos
-- Todos os gráficos são salvos em formato PNG no diretório `output/`
+- Todos os gráficos são salvos em formato PNG no diretório `graficos/`
 - O sistema de memória permite que o agente "lembre" de análises anteriores
 - O código é executado em um ambiente isolado com acesso apenas ao DataFrame
 - O agente é genérico e funciona com qualquer CSV, não apenas o exemplo fornecido

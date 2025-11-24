@@ -86,15 +86,15 @@ O agente possui **6 ferramentas especializadas**:
 
 - **Memória de Curto Prazo**: Histórico de conversa mantido pelo Agno
 - **Memória de Longo Prazo**: 
-  - Conclusões salvas em `output/conclusions.json`
-  - Gráficos salvos em `output/*.png`
+- Conclusões salvas em `graficos/conclusions.json`
+- Gráficos salvos em `graficos/*.png`
 
 #### 2.2.3 Execução de Código
 
 A ferramenta `execute_analysis` cria um ambiente Python isolado com acesso a:
 - `df`: DataFrame pandas com o dataset
 - `pd`, `np`, `plt`, `sns`: Bibliotecas de análise e visualização
-- `output_dir`: Diretório para salvar gráficos
+- `output_dir`: Diretório para salvar gráficos (graficos/)
 
 ### 2.3 Fluxo de Funcionamento
 
@@ -122,7 +122,7 @@ agent-ia-EDA/
 ├── archive/
 │   └── creditcard.csv        # Dataset de exemplo
 │
-├── output/                   # Gerado automaticamente
+├── graficos/                 # Gerado automaticamente
 │   ├── *.png                # Gráficos gerados
 │   └── conclusions.json      # Conclusões salvas
 │
@@ -188,9 +188,9 @@ A distribuição de `Amount` é altamente assimétrica (positiva), com:
 - Poucas transações com valores muito altos (outliers)
 - Mediana muito menor que a média, indicando assimetria
 
-**Gráfico Gerado**: `output/distribuicao_amount.png`
+**Gráfico Gerado**: `graficos/distribuicao_amount.png`
 
-![Distribuição de Amount](output/distribuicao_amount.png)
+![Distribuição de Amount](graficos/distribuicao_amount.png)
 
 **Conclusão**: A distribuição mostra que a maioria das transações tem valores relativamente baixos, com uma cauda longa à direita indicando a presença de transações com valores muito altos.
 
@@ -343,7 +343,7 @@ Para a coluna `Amount`:
    - A maioria das transações (96.85%) está dentro dos limites normais
    - Poucas transações (3.15%) têm valores muito altos
 
-**Gráfico Gerado**: `output/boxplot_amount.png`
+**Gráfico Gerado**: `graficos/boxplot_amount.png`
 
 O boxplot mostra claramente a presença de muitos outliers acima do limite superior.
 
@@ -483,7 +483,7 @@ https://github.com/seu-usuario/agent-ia-EDA
 - ✅ Nenhuma chave hardcoded no código
 - ✅ `.gitignore` configurado para ignorar:
   - `.env`
-  - `output/` (gráficos e conclusões)
+  - `graficos/` (gráficos e conclusões)
   - `.venv/` (ambiente virtual)
   - `*.csv` (datasets)
 
