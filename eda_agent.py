@@ -266,8 +266,10 @@ eda_agent = Agent(
         "   - Identificar variáveis mais/menos correlacionadas",
         "",
         "E) CONCLUSÕES:",
-        "   - Sempre salve conclusões importantes com save_conclusion",
-        "   - Ao final, use get_conclusions para apresentar um resumo",
+        "   - SEMPRE salve conclusões importantes com save_conclusion após cada análise significativa",
+        "   - Quando o usuário perguntar sobre conclusões, use get_conclusions para recuperar e apresentar",
+        "   - Se não houver conclusões salvas, faça uma análise rápida dos dados e salve pelo menos 3-5 conclusões principais",
+        "   - Conclusões devem ser específicas, baseadas em dados e incluir números/estatísticas quando relevante",
         "",
         "DIRETRIZES PARA GRÁFICOS:",
         "   - Sempre salve gráficos em 'graficos/' com nomes descritivos",
@@ -293,6 +295,12 @@ eda_agent = Agent(
         "   - Apresente números e estatísticas de forma organizada",
         "   - Relacione descobertas com o contexto do problema",
         "   - NÃO pergunte ao usuário o que fazer - execute a análise diretamente",
+        "",
+        "QUANDO PERGUNTADO SOBRE CONCLUSÕES:",
+        "   - Se houver conclusões salvas: use get_conclusions e apresente um resumo organizado",
+        "   - Se NÃO houver conclusões: faça análises rápidas dos dados principais e salve conclusões importantes",
+        "   - Sempre explique o significado das conclusões e como elas se relacionam",
+        "   - Inclua insights práticos e recomendações quando apropriado",
     ],
 )
 
@@ -343,7 +351,7 @@ def main():
         
         if pergunta.lower() == 'conclusoes':
             print("\n📊 Buscando conclusões salvas...")
-            response = eda_agent.run("O dataset já está carregado. Apresente um resumo completo de todas as conclusões encontradas nas análises realizadas.")
+            response = eda_agent.run("O dataset já está carregado. Primeiro verifique se há conclusões salvas. Se não houver, faça análises rápidas dos dados principais (distribuições, estatísticas descritivas, outliers, correlações) e salve pelo menos 5 conclusões importantes. Depois apresente um resumo completo e explicado de todas as conclusões encontradas.")
         else:
             print(f"\n🔍 Analisando...")
             # Adiciona contexto de que o dataset já está carregado

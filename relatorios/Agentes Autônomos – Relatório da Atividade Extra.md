@@ -190,7 +190,7 @@ A distribuição de `Amount` é altamente assimétrica (positiva), com:
 
 **Gráfico Gerado**: `graficos/distribuicao_amount.png`
 
-![Distribuição de Amount](graficos/distribuicao_amount.png)
+![Distribuição de Amount](../graficos/distribuicao_amount.png)
 
 **Conclusão**: A distribuição mostra que a maioria das transações tem valores relativamente baixos, com uma cauda longa à direita indicando a presença de transações com valores muito altos.
 
