@@ -142,16 +142,6 @@ Digite `conclusoes` para ver um resumo de todas as análises realizadas.
 
 Digite `sair` para encerrar o programa.
 
-### 📸 Exemplo de Execução
-
-Abaixo está um exemplo visual do agente em execução:
-
-![Exemplo de Execução do Agente](exemple-run%20-agent.png)
-
-*Interface interativa do agente mostrando o carregamento do dataset e perguntas do usuário*
-
----
-
 ## 📈 Gráficos Gerados
 
 Todos os gráficos são salvos automaticamente no diretório `graficos/` com nomes descritivos. O agente informa quais gráficos foram gerados após cada análise.
